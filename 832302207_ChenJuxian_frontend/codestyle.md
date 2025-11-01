@@ -1,207 +1,150 @@
-# codestyle.md — Spring Boot (Google Java Style Guide + Spring 补充)
+# codestyle-vue.md — Vue (基于 Google JavaScript Style Guide + Vue 官方风格指南)
 
-## 1. 总体说明
-本规范以 **Google Java Style Guide**（Java）为基准，结合 Spring Boot 推荐的项目结构与常见社区约定，目的是保证代码一致性、可读性与可维护性。团队应把此文件放在仓库根目录并在新成员入职时说明。
+> 说明：本文件为 Vue 前端项目的一份团队基线规范，JS/TS 部分以 **Google JavaScript Style Guide** 为主，Vue 特有约定参考 **Vue 官方风格指南**。团队可在此基础上做细化（例如是否使用 `script setup`、是否强制使用 TypeScript、UI 框架命名规则等）。
 
 ---
 
-## 2. 格式与缩进
-- **缩进**：每个块缩进 **2 个空格**。不要使用 Tab。  
-- **每行长度**：**100 字符**为软限制，极端情况可允许，但应尽量保持在 100 内。  
-- **单条语句一行**（one statement per line）。
+## 1. 总体原则
+- JS/TS 部分遵循 Google JavaScript Style Guide（命名、缩进、注释、模块导入等）。
+- Vue 特有的组件命名、props、事件、SFC 文件组织则遵循 Vue 官方 Style Guide 的推荐（组件多词命名、props 验证、文件名规则等）。
+- 使用自动化工具（ESLint + Prettier 或 ESLint + eslint --fix）在提交/CI 中强制执行规则，以避免风格争议。
 
-**示例**
-```java
-if (condition) {
-  doSomething();
-  doAnotherThing();
-}
+---
+
+## 2. 项目/目录结构（建议）
+```
+src/
+├── assets/
+├── components/      // 可重用通用组件（Base、UI）
+├── layouts/
+├── pages/           // 路由页面组件
+├── composables/     // 可复用逻辑（Vue 3 composition）
+├── store/           // Pinia / Vuex
+├── services/        // API 封装
+├── router/
+└── utils/
 ```
 
 ---
 
-## 3. 命名规范
-遵循 Java 标准命名：
-- 包名：小写，反域名（例如 `com.company.project`）。
-- 类名：`UpperCamelCase`（例如 `UserController`）。
-- 方法名/变量名：`lowerCamelCase`。
-- 常量（`static final`）：**全大写，用下划线分隔**（例如 `MAX_RETRIES`）。实例 `final` 字段仍用 `lowerCamelCase`。
+## 3. Single File Component (SFC) 约定
+- 文件扩展名使用 `.vue`。
+- 文件名可统一为 **PascalCase**（例如 `UserCard.vue`）或 **kebab-case**（例如 `user-card.vue`），团队选一种并保持一致。官方推荐 PascalCase 有利于编辑器自动完成。  
+- 组件 `name` 推荐使用 `PascalCase` 并为多词（非根 App 组件）。
+- SFC 的代码块顺序（推荐）：
+  1. `<script setup>` / `<script>`
+  2. `<template>`
+  3. `<style>`
+
+- 对于 Vue 3，推荐使用 `<script setup>` 语法糖（更简洁且性能更好），但若项目需兼容旧写法，可使用标准 `<script>` + `export default`。  
+- 不在模板中编写复杂表达式 —— 将复杂逻辑放入 `computed` / `setup`。  
 
 ---
 
-## 4. 文件与包结构（Spring Boot 约定）
-推荐按照 **功能/域（feature）或层（layer）** 划分包，保持可扩展性与可测试性。常见结构示例：
-
-```
-src/main/java/com/company/project
-├── ProjectApplication.java        // main application
-├── config/                        // 配置类
-├── controller/                    // REST controllers
-├── service/                       // 业务逻辑
-├── repository/                    // 数据访问（Spring Data JPA）
-├── domain/                        // 实体/模型
-├── dto/                           // DTOs
-└── util/                          // 工具类
-```
-
-**原则**：`@SpringBootApplication` 主类放在根包上层，保证组件扫描覆盖子包。
+## 4. 命名约定
+- 组件名：`PascalCase`（`MyButton`）或 `kebab-case` 文件名配合 `PascalCase` 导出/引用。  
+- 事件名（$emit）：**kebab-case**（`'user-logged-in'`），在 JS 中使用 camelCase 触发/监听根据团队约定，但模板中使用 kebab-case。  
+- Props：在组件 JS/TS 中使用 `camelCase` 定义（`userName`），模板中以 `kebab-case` 传递（`user-name="..."`）。  
+- 变量/函数：遵循 Google JS 的 `lowerCamelCase`。  
+- 文件：按功能夹或组件命名，页面组件可放 `pages/`。  
 
 ---
 
-## 5. 类成员顺序与组织
-按一致顺序组织类成员以便可读性。推荐顺序（示例）：
-1. 常量 `private static final`
-2. 成员变量（按访问权限分组：`private` → `protected` → `public`）
-3. 构造器（public → package-private）
-4. `@PostConstruct` / 生命周期方法
-5. 公共 API（public）方法
-6. 受保护 / 包私有方法
-7. 私有方法
-8. 内部类 / 枚举
+## 5. 缩进与格式化
+- **缩进：2 个空格**（与 Google JS 风格一致）。  
+- 推荐使用 Prettier 或 google-style/ESLint 配置做自动格式化；在 CI 中加入格式检查。  
+- 每行长度建议不超过 100 个字符。  
 
 ---
 
-## 6. 注释与 JavaDoc
-- 公共类和公共方法必须有 JavaDoc，简要说明用途与重要约束（参数、返回值、异常）。
-- 复杂逻辑在方法内部应添加行内注释，但不要过度注释显而易见的代码。
-
-**示例**
-```java
-/**
- * Retrieves user by id.
- *
- * @param id user id
- * @return user DTO or Optional.empty() if not found
- */
-public Optional<UserDto> findById(Long id) { ... }
-```
+## 6. JavaScript / TypeScript 细则（Google JS 风格要点）
+- 使用 `const` / `let`（优先使用 `const`）。  
+- 使用 ES6+ 语法（模块 `import` / `export`，箭头函数，解构等）。  
+- 使用分号（`;`）。
+- 避免在不同地方改变模块导出风格（始终使用 `export default` 或命名导出，视团队约定）。
 
 ---
 
-## 7. Imports
-- 按顺序组织 imports：标准库 → 第三方库 → 本项目；每组之间留空行。使用具体类导入（不要使用 `*`）。
+## 7. Vue 组件最佳实践
+- 组件职责单一（单一职责）。  
+- 将可复用逻辑提取到 `composables/`（Vue 3 composition API）。  
+- 使用 `emits` 明确声明触发的事件；使用 `props` 验证类型与必填性（或使用 TypeScript）。  
+- 避免直接修改父组件传入的 props（创建本地副本或使用 v-model / emit）。
 
 ---
 
-## 8. 注解（Annotations）顺序（对 Spring 特别约定）
-- 在类或方法上使用多个注解时，保持固定顺序以便可读性。常见顺序（从上到下）示例：
-  - `@RestController` / `@Controller`
-  - `@RequestMapping`（类级别）
-  - `@Validated`
-  - `@Autowired` / 构造器注入（推荐使用构造器注入而非字段注入）
-- 推荐使用构造器注入并尽量避免字段注入。
-
-**示例（构造器注入）**
-```java
-@RestController
-@RequestMapping("/api/users")
-public class UserController {
-
-  private final UserService userService;
-
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<UserDto> getUser(@PathVariable Long id) { ... }
-}
-```
+## 8. 模板与 JSX
+- 模板内尽量避免三元嵌套与复杂表达式；使用计算属性或方法。  
+- 如果使用 JSX/TSX，遵循 Google 的 JS 风格与项目的 React/TSX 约定（如有）。
 
 ---
 
-## 9. 日志（Logging）
-- 使用 `org.slf4j.Logger`（通常通过 `LoggerFactory.getLogger(...)`）而非 `System.out.println`。
-- 在类级别定义 `private static final Logger logger = LoggerFactory.getLogger(MyClass.class);`。
-- 记录要有意义：避免打印敏感信息（密码、个人隐私）、避免过度日志。
+## 9. 样式（CSS / Preprocessor）
+- 样式放在 SFC 的 `<style>` 中或使用全局样式/utility-first（如 Tailwind）；团队须统一方式。  
+- 推荐 `scoped` CSS 以避免样式泄漏，或使用 CSS Modules / BEM 命名空间策略。  
+- 尽量避免内联样式（style="...")，使用 class 绑定与 computed class。  
 
 ---
 
-## 10. 异常处理
-- 使用显式、语义化的异常（自定义业务异常继承 RuntimeException）。
-- Controller 层使用 `@ControllerAdvice` + `@ExceptionHandler` 统一映射 HTTP 错误码和消息，避免在业务代码中直接返回 ResponseEntity。
-- 尽量不要吞掉异常（catch 后空处理），至少记录日志或重新抛出。
+## 10. Imports 顺序与组织
+- 模块导入顺序建议：外部依赖 → 绝对路径（src/）→ 相对路径（父/同级/子），每组之间空一行；使用具体导入避免 `*`。  
+- 对于大型项目，建议在 `tsconfig.json` 中配置 `paths`（或 vite/webpack alias）并在 ESLint 中保持解析一致。
 
 ---
 
-## 11. REST 风格约定（Controller）
-- 资源 URI 使用复数名词：`/api/users`，CRUD 对应 HTTP 方法：`GET`/`POST`/`PUT`/`DELETE`。
-- 返回合适的 HTTP 状态码（201 Created / 204 No Content / 404 Not Found 等）。
-- 请求/响应使用 DTO，不要直接暴露实体（Entity）。
+## 11. ESLint / Lint 规则（推荐）
+- 使用 `eslint`，并选用：
+  - `eslint:recommended` 基础规则
+  - `plugin:vue/vue3-recommended`（或 `plugin:vue/recommended` 根据版本）
+  - `google` 或 `airbnb-base`（JS 通用规则，团队选其一）
+  - `prettier` 与 `eslint-config-prettier` 以解决格式化冲突
+
+- 启用规则示例：强制 `component-name-in-template-casing`、`no-duplicate-attributes`、`vue/require-prop-types`（如未使用 TypeScript）。
 
 ---
 
-## 12. 单元测试与集成测试
-- 单元测试（Mockito / JUnit）放在 `src/test/java` 与主包对称的包路径下。
-- 对 Service 逻辑采用纯单元测试（无需 Spring 上下文），需要 Spring 的测试用 `@SpringBootTest` 或 `@WebMvcTest` 根据场景使用。
-- CI 中执行测试并失败即阻断合并。
+## 12. 测试与类型检查
+- 单元测试使用 Vitest / Jest；UI 组件可使用 @vue/test-utils。  
+- 若项目使用 TypeScript，启用 `strict` 模式并在 CI 中运行 `tsc --noEmit` 做类型检查。
 
 ---
 
-## 13. 工具链与自动格式化
-- 团队强烈建议使用 `google-java-format` 或 `spotless`（配合 `google-java-format`）在 CI / pre-commit 钩子中格式化代码，保证所有提交的一致性。
-- 推荐在 IDE 中安装 `google-java-format` 插件；并在 CI（Maven/Gradle）中加入格式检查与自动格式化步骤。
+## 13. 日志与错误处理
+- 在前端避免打印敏感信息。使用统一的错误展示/Toast 服务，后端错误转换为用户友好的消息。  
 
-**示例（Gradle + Spotless）**
-```groovy
-plugins {
-  id 'com.diffplug.spotless' version '6.0.0'
-}
-spotless {
-  java {
-    googleJavaFormat()
+---
+
+## 14. 代码审查要点
+- 命名是否清晰，组件是否过大、是否可复用？  
+- 是否有单元测试/样式影响？是否遵循 ESLint/Prettier？  
+
+---
+
+## 15. 工具链示例（快速放入 package.json 的脚本）
+```json
+{
+  "scripts": {
+    "lint": "eslint --ext .js,.ts,.vue src",
+    "lint:fix": "eslint --fix --ext .js,.ts,.vue src",
+    "format": "prettier --write \"src/**/*.{js,ts,vue,json,md}\""
   }
 }
 ```
 
 ---
 
-## 14. 代码审查（Code Review）要点
-- 可读性优先：是否易于理解？命名是否清晰？方法是否过长？
-- 单一职责：类/方法是否只做一件事？
-- 测试覆盖：关键逻辑是否有單元测试？边界条件是否被考虑？
-- 安全与隐私：有没有泄露敏感数据？输入是否验证？
-
----
-
-## 15. 常见示例（快速参考）
-
-**常量**
-```java
-private static final int MAX_PAGE_SIZE = 50;
-```
-
-**Controller 返回 201**
-```java
-@PostMapping
-public ResponseEntity<UserDto> createUser(@RequestBody UserCreateDto dto) {
-  UserDto created = userService.create(dto);
-  URI location = URI.create("/api/users/" + created.getId());
-  return ResponseEntity.created(location).body(created);
-}
-```
-
-**Service 注入（构造器）**
-```java
-@Service
-public class UserService {
-  private final UserRepository repo;
-  public UserService(UserRepository repo) { this.repo = repo; }
-}
-```
-
----
-
-## 16. 何处补充 / 定制
-- 本文件为团队基线；具体的命名细节（例如 Controller 方法顺序、异常命名规则等）可由项目在此基础上进一步补充与细化。
-- 建议在仓库中同时维护 IDE 配置（`.editorconfig`、IntelliJ settings）与格式化工具配置（spotless/checkstyle/google-java-format），确保一致性。
+## 16. 可选团队约定（可选，建议项目讨论决定）
+- 是否强制使用 `script setup`？
+- 组件文件名 PascalCase or kebab-case？
+- 是否使用 TypeScript？
+- 是否采用 Tailwind vs 传统 CSS？
 
 ---
 
 ## 17. 参考资料（建议阅读）
-- Google Java Style Guide
-- Spring Boot 官方文档（项目结构与最佳实践）
-- google-java-format / spotless
+- Google JavaScript Style Guide
+- Vue.js Official Style Guide
+- Airbnb JavaScript Style Guide
 
 
 
