@@ -1,4 +1,4 @@
-# codestyle-vue.md — Vue (Google JavaScript Style Guide + Vue 官方指南)
+# codestyle.md — Vue (Google JavaScript Style Guide + Vue 官方指南)
 
 主要参考来源:Google JavaScript Style Guide ，Vue 官方指南
 
