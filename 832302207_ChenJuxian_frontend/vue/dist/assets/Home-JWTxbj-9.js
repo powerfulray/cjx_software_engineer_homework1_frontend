@@ -1,0 +1,1 @@
+import{_ as o,c as r,a as s,o as a}from"./index-Ct-Hh4vc.js";const c={};function t(n,e){return a(),r("div",null,[...e[0]||(e[0]=[s("div",{class:"card"}," 你好同学，欢迎您使用此系统 ",-1)])])}const l=o(c,[["render",t]]);export{l as default};
