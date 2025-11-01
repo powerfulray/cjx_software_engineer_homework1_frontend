@@ -1,6 +1,6 @@
 # codestyle-vue.md — Vue (Google JavaScript Style Guide + Vue 官方指南)
 
-主要参考来源:Google Java Style Guide ，Vue 官方指南
+主要参考来源:Google JavaScript Style Guide ，Vue 官方指南
 
 ---
 
