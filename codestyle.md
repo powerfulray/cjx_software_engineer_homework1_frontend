@@ -1,6 +1,6 @@
-# codestyle-vue.md — Vue (基于 Google JavaScript Style Guide + Vue 官方风格指南)
+# codestyle-vue.md — Vue (Google JavaScript Style Guide + Vue 官方指南)
 
-> 说明：本文件为 Vue 前端项目的一份团队基线规范，JS/TS 部分以 **Google JavaScript Style Guide** 为主，Vue 特有约定参考 **Vue 官方风格指南**。团队可在此基础上做细化（例如是否使用 `script setup`、是否强制使用 TypeScript、UI 框架命名规则等）。
+主要参考来源:Google Java Style Guide ，Vue 官方指南
 
 ---
 
